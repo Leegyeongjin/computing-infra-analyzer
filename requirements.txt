@@ -1,0 +1,12 @@
+
+GPUtil==1.4.0
+paho-mqtt==1.6.1
+psutil==5.9.5
+
+# Flask and Websocket
+Flask==2.3.2
+Flask-SocketIO==5.3.5
+gevent-websocket==0.10.1
+
+# Install packages according to operating system (OS)
+WMI==1.5.1; platform_system == 'Windows'
