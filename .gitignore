@@ -1,0 +1,9 @@
+
+# Ignore MQTT config
+config.json
+
+# Ignore vscode config
+.vscode
+
+# Ignore logs
+*.log

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Computing Infrastructure</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        #header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        #content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: white;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        h1 {
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        #sidebar {
+            background-color: #333;
+            color: white;
+            text-align: left;
+            padding: 1rem;
+            width: 25%;
+            float: right;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        #topicList {
+            position: fixed;
+            top: 150px;
+            right: 10px;
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            border-radius: 5px;
+        }
+        #topicList ul {
+            list-style: none;
+            padding: 0;
+        }
+        #topicList li {
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+        #topicList p {
+            color: yellow;
+            font-weight: bold;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function() {
+            var sock = io.connect('http://' + document.domain + ':' + location.port);
+            sock.on('connect', function() {
+                sock.emit('my event', {data: 'I\'m connected!'});
+            });
+
+            sock.on('disconnect', function() {
+                sock.emit('my event', {data: 'I\'m disconnected!'});
+            });
+
+            sock.on('message', function(msg){
+                if(msg.type === 'normal'){
+                    $('#computing-infra-info').append('<li>> ' + msg.message + '</li>');
+                }else{
+                    $('#computing-infra-info').append('<li>' + msg.message + '</li>');
+                }
+            });
+
+            $('#getInfraInfo').on('click', function(){
+                var selectedTopic = $('#myTopic').val();
+                sock.send($('#myTopic').val());
+                $('#myTopic').val('');
+            });
+            
+                var topicList = [
+                "OS 정보: request/infra-info/host/os",
+                "Process 정보: request/infra-info/host/process",
+                "Computer 정보: request/infra-info/host/computer",
+                "Memory 정보: request/infra-info/host/memory",
+                "Disk 정보: request/infra-info/host/disk",
+                "GPU 정보: request/infra-info/host/gpu",
+                "실행중인 process 정보: request/infra-info/host/runningprocesses",
+                "Network 정보: request/infra-info/host/network"
+            ];
+            
+            var topicSelect = $('#topicList ul');
+            $.each(topicList, function(index, value) {
+                topicSelect.append($('<li>').text(value));
+            });
+            
+            
+            $('#topicList li').on('click', function() {
+                var selectedTopic = $(this).text().split(":")[1].trim();
+                $('#myTopic').val(selectedTopic);
+            });
+            
+
+        });
+    </script>
+</head>
+<body>
+    <div id="header">
+        <h1>Analyze your Computing Infrastructure</h1>
+    </div>
+    <div id="content">
+        <label for="myTopic">Topic:</label>
+        <input type="text" id="myTopic">
+        <button id="getInfraInfo">Get Info</button>
+        <ul id="computing-infra-info"></ul>
+    </div>
+    <div id="topicList">
+        <h2><Topic List></h2>
+        <p> -------------------------Topice List------------------------- </p>
+        <p>(Click on the topic list you want to know)</p>
+        <ul></ul>
+    </div>
+</body>
+</html>
