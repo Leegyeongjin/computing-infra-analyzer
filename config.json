@@ -1,0 +1,6 @@
+{
+  "mqtt": {
+    "broker_ip": "broker.emqx.io",
+    "broker_port": 1883
+  }
+}
